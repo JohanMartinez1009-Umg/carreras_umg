@@ -30,10 +30,13 @@ class WhatsAppWebhook extends BaseController
         $verifyToken   = (string) ($config['verify_token'] ?? '');
 
         if ($modo === 'subscribe' && $verifyToken !== '' && hash_equals($verifyToken, $token)) {
-            return $this->response->setStatusCode(200)->setBody($challenge);
+            // Content-Type texto plano: Meta compara el cuerpo EXACTO con el challenge.
+            // Si se deja el Content-Type por defecto (html), el filtro DebugToolbar le
+            // inyecta su script en entornos de desarrollo y rompe la verificación.
+            return $this->response->setStatusCode(200)->setContentType('text/plain')->setBody($challenge);
         }
 
-        return $this->response->setStatusCode(403)->setBody('Forbidden');
+        return $this->response->setStatusCode(403)->setContentType('text/plain')->setBody('Forbidden');
     }
 
     public function recibir()
@@ -42,7 +45,7 @@ class WhatsAppWebhook extends BaseController
         $config      = model(WhatsAppConfigModel::class)->obtener();
 
         if (! $this->firmaValida($cuerpoCrudo, $config)) {
-            return $this->response->setStatusCode(403)->setBody('Firma invalida');
+            return $this->response->setStatusCode(403)->setContentType('text/plain')->setBody('Firma invalida');
         }
 
         // Cualquier fallo al procesar/responder se registra, pero SIEMPRE se devuelve 200:
@@ -54,7 +57,7 @@ class WhatsAppWebhook extends BaseController
             log_message('error', 'WhatsAppWebhook: {msg}', ['msg' => $e->getMessage()]);
         }
 
-        return $this->response->setStatusCode(200)->setBody('EVENT_RECEIVED');
+        return $this->response->setStatusCode(200)->setContentType('text/plain')->setBody('EVENT_RECEIVED');
     }
 
     private function firmaValida(string $cuerpoCrudo, array $config): bool
