@@ -20,6 +20,11 @@ $routes->group('consulta', ['filter' => 'auth'], static function ($routes) {
 // Archivos PDF: se sirven por controlador para que solo accedan usuarios con sesión.
 $routes->get('archivo/(:num)/(:segment)', 'Consulta::archivo/$1/$2', ['filter' => 'auth']);
 
+// Webhook de WhatsApp Business Cloud API: debe ser público (lo llama Meta, sin sesión).
+// Su única protección es la validación de firma dentro del propio controlador.
+$routes->get('whatsapp/webhook', 'WhatsAppWebhook::verificar');
+$routes->post('whatsapp/webhook', 'WhatsAppWebhook::recibir');
+
 // Administración (solo rol admin)
 $routes->group('admin', ['filter' => 'admin'], static function ($routes) {
     $routes->get('/', 'Admin\Carreras::index');
@@ -42,4 +47,8 @@ $routes->group('admin', ['filter' => 'admin'], static function ($routes) {
     $routes->get('correo', 'Admin\Correo::index');
     $routes->post('correo', 'Admin\Correo::guardar');
     $routes->post('correo/probar', 'Admin\Correo::probar');
+
+    $routes->get('whatsapp', 'Admin\WhatsApp::index');
+    $routes->post('whatsapp', 'Admin\WhatsApp::guardar');
+    $routes->post('whatsapp/probar', 'Admin\WhatsApp::probar');
 });

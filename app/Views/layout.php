@@ -35,6 +35,7 @@
             <a class="btn btn-pequeno btn-secundario" href="<?= site_url('admin/carreras') ?>">Administrar carreras</a>
             <a class="btn btn-pequeno btn-secundario" href="<?= site_url('admin/usuarios') ?>">Usuarios</a>
             <a class="btn btn-pequeno btn-secundario" href="<?= site_url('admin/correo') ?>">Correo</a>
+            <a class="btn btn-pequeno btn-secundario" href="<?= site_url('admin/whatsapp') ?>">WhatsApp</a>
         <?php endif; ?>
         <form method="post" action="<?= site_url('logout') ?>" style="margin:0">
             <?= csrf_field() ?>

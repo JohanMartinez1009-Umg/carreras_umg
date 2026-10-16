@@ -75,7 +75,9 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-            'csrf',
+            // El webhook de WhatsApp lo llama Meta sin token CSRF; su protección es la
+            // validación de firma (X-Hub-Signature-256) dentro de WhatsAppWebhook::recibir().
+            'csrf' => ['except' => ['whatsapp/webhook']],
             'invalidchars',
         ],
         'after' => [
